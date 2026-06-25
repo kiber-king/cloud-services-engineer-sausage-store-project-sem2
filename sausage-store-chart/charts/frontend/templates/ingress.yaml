@@ -1,21 +1,33 @@
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-{{ .Chart.Name }}-ingress
+  name: {{ .Release.Name }}-frontend-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: sausage-frontend
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: sausage-store
+    env: "{{ .Values.environment | default "production" }}"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   tls:
     - hosts:
-        - {{ .Values.ingress.host }}
+        - {{ .Values.fqdn }}
+      secretName: {{ .Values.tlsSecretName }}
   rules:
-    - host: {{ .Values.ingress.host }}
+    - host: {{ .Values.fqdn }}
       http:
         paths:
-        - path: {{ .Values.ingress.path }}
-          pathType: {{ .Values.ingress.pathType }}
-          backend:
-            service:
-              name: {{ .Release.Name }}-{{ .Chart.Name }}-service
-              port:
-                number: {{ .Values.service.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-frontend
+                port:
+                  number: {{ .Values.servicePort }}
