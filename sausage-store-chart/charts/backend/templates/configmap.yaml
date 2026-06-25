@@ -14,5 +14,6 @@ metadata:
     env: "{{ .Values.environment | default "production" }}"
 data:
   SPRING_DATASOURCE_URL: "{{ .Values.global.postgresql.jdbcUrl }}"
+  SPRING_CLOUD_VAULT_ENABLED: "false"
   REPORT_PATH: "{{ .Values.reportPath }}"
   LOG_PATH: "{{ .Values.logPath }}"

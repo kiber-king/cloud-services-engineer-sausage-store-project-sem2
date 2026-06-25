@@ -9,7 +9,7 @@ on:
 env:
   CHART_DIR: sausage-store-chart
   CHART_NAME: sausage-store
-  CHART_VERSION: 0.1.0
+  CHART_VERSION: 0.1.${{ github.run_number }}
   RELEASE_NAME: sausage-store
   KUBE_NAMESPACE: r-devops-magistracy-project-2sem-341598757
   FRONTEND_FQDN: front-kiber-king.2sem.students-projects.ru
@@ -33,6 +33,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./backend
+          platforms: linux/amd64
           push: true
           build-args: |
             VERSION=${{ env.IMAGE_TAG }}
@@ -44,6 +45,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./backend-report
+          platforms: linux/amd64
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/sausage-backend-report:${{ env.IMAGE_TAG }}
@@ -53,6 +55,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
+          platforms: linux/amd64
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/sausage-frontend:${{ env.IMAGE_TAG }}
@@ -126,11 +129,18 @@ jobs:
           NEXUS_HELM_REPO_USER: ${{ secrets.NEXUS_HELM_REPO_USER }}
           NEXUS_HELM_REPO_PASSWORD: ${{ secrets.NEXUS_HELM_REPO_PASSWORD }}
 
+      - name: Clean stale Helm hook jobs
+        run: |
+          kubectl delete job "${RELEASE_NAME}-mongodb-init" \
+            --namespace "$KUBE_NAMESPACE" \
+            --ignore-not-found=true
+
       - name: Deploy Helm chart
         run: |
           helm upgrade --install "$RELEASE_NAME" "nexus/${CHART_NAME}" \
             --namespace "$KUBE_NAMESPACE" \
             --create-namespace \
+            --version "$CHART_VERSION" \
             --set backend.image="${DOCKERHUB_USERNAME}/sausage-backend" \
             --set backend.imageTag="$IMAGE_TAG" \
             --set backend-report.image="${DOCKERHUB_USERNAME}/sausage-backend-report" \

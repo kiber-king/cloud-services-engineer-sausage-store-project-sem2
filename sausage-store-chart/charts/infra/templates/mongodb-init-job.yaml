@@ -18,7 +18,8 @@ metadata:
     helm.sh/hook-weight: "5"
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 spec:
-  backoffLimit: 10
+  activeDeadlineSeconds: 300
+  backoffLimit: 3
   template:
     metadata:
       labels:
@@ -39,12 +40,19 @@ spec:
             - /bin/sh
             - -ec
             - |
-              until mongosh "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/admin" --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
+              until mongosh --host mongodb --port 27017 \
+                --username "$MONGO_INITDB_ROOT_USERNAME" \
+                --password "$MONGO_INITDB_ROOT_PASSWORD" \
+                --authenticationDatabase admin \
+                --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
                 echo "Waiting for MongoDB..."
                 sleep 5
               done
 
-              mongosh "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/admin" <<'EOF'
+              mongosh --host mongodb --port 27017 \
+                --username "$MONGO_INITDB_ROOT_USERNAME" \
+                --password "$MONGO_INITDB_ROOT_PASSWORD" \
+                --authenticationDatabase admin <<'EOF'
               const dbName = process.env.MONGO_APP_DATABASE;
               const userName = process.env.MONGO_APP_USERNAME;
               const userPassword = process.env.MONGO_APP_PASSWORD;
