@@ -103,21 +103,22 @@ infra:
         cpu: 400m
         memory: 384Mi
   mongodb:
-  initJob:
-    enabled: true
+    image: mongo:7
+    storage: 1Gi
+    storageClassName: ""
     resources:
       requests:
         cpu: 100m
-        memory: 256Mi
+        memory: 128Mi
       limits:
-        cpu: 300m
-        memory: 512Mi
+        cpu: 400m
+        memory: 384Mi
     initJob:
       enabled: true
       resources:
         requests:
-          cpu: 50m
-          memory: 64Mi
-        limits:
           cpu: 100m
-          memory: 128Mi
+          memory: 256Mi
+        limits:
+          cpu: 300m
+          memory: 512Mi
