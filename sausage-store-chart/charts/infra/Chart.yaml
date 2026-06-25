@@ -1,8 +1,6 @@
----
 apiVersion: v2
 type: application
 name: infra
-description: infra Helm Chart
-
+description: Sausage Store databases
 version: 0.1.0
-appVersion: "latest"
+appVersion: "0.1.0"
