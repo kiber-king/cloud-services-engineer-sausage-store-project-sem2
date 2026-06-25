@@ -150,8 +150,9 @@ jobs:
             --set-string frontend.fqdn="$FRONTEND_FQDN" \
             --set-string global.postgresql.password="$POSTGRES_PASSWORD" \
             --set-string global.mongo.rootPassword="$MONGO_ROOT_PASSWORD" \
+            --set-string global.mongo.database="sausage-store" \
             --set-string global.mongo.password="$MONGO_REPORT_PASSWORD" \
-            --set-string global.mongo.appUri="mongodb://report:${MONGO_REPORT_PASSWORD}@mongodb:27017/reports?authSource=reports" \
+            --set-string global.mongo.appUri="mongodb://report:${MONGO_REPORT_PASSWORD}@mongodb:27017/sausage-store?authSource=sausage-store" \
             --wait \
             --timeout 10m
         env:

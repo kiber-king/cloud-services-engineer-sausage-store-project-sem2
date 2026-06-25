@@ -15,10 +15,10 @@ global:
     port: 27017
     rootUsername: root
     rootPassword: mongo-root-password
-    database: reports
+    database: sausage-store
     username: report
     password: report-password
-    appUri: mongodb://report:report-password@mongodb:27017/reports?authSource=reports
+    appUri: mongodb://report:report-password@mongodb:27017/sausage-store?authSource=sausage-store
 
 backend:
   image: kiberking/sausage-backend
