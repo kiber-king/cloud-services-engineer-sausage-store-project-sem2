@@ -1,0 +1,10 @@
+Sausage Store has been deployed.
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Frontend host: {{ .Values.frontend.fqdn }}
+
+Useful checks:
+  helm list -n {{ .Release.Namespace }}
+  kubectl -n {{ .Release.Namespace }} get pods
+  kubectl -n {{ .Release.Namespace }} get ingress
