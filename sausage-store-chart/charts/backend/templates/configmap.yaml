@@ -1,12 +1,18 @@
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-{{ .Chart.Name }}-conf
+  name: {{ .Release.Name }}-backend-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: sausage-backend
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: sausage-store
+    env: "{{ .Values.environment | default "production" }}"
 data:
-  postgres_uri: {{ .Values.env.postgresUri }}
-  postgres_user: {{ .Values.env.postgresUser }}
-  postgres_password: {{ .Values.env.postgresPassword }}
-  report_path: {{ .Values.env.reportPath }}
-  log_path: {{ .Values.env.logPath }}
-  
+  SPRING_DATASOURCE_URL: "{{ .Values.global.postgresql.jdbcUrl }}"
+  REPORT_PATH: "{{ .Values.reportPath }}"
+  LOG_PATH: "{{ .Values.logPath }}"
